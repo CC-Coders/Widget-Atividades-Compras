@@ -34,7 +34,7 @@ async function ExecutaRelatorio(){
     LoadingCarregandoRelatorio.show();
 
     var relatorio = $("#Relatorio").val();
-    $("#TodasAtividades, #AtividadesPorAtendimento").hide();
+    $("#TodasAtividades, #AtividadesPorAtendimento, #AtividadesPorSolicitante").hide();
 
     if (relatorio == "Todas as Atividades") {
         await asyncCriaListaAtividadeContab();
@@ -43,6 +43,10 @@ async function ExecutaRelatorio(){
     else if (relatorio == "Atividades por Atendimento") {
         await asyncCriaListaAtividadePorAtendimento();
         $("#AtividadesPorAtendimento").show();
+    }
+    else if (relatorio == "Atividades por Solicitante") {
+        await asyncCriaListaAtividadesPorSolicitante();
+        $("#AtividadesPorSolicitante").show();
     }
 
     LoadingCarregandoRelatorio.hide();
@@ -153,6 +157,69 @@ async function asyncCriaListaAtividadePorAtendimento(){
 
             DatasetFactory.getDataset("ListaAtividadesDoComprasNoFluig",null,[
                 DatasetFactory.createConstraint("Operacao","ChamadosResolvidosPorAtendimento","ChamadosResolvidosPorAtendimento",ConstraintType.MUST),
+                DatasetFactory.createConstraint("Ano",ano,ano,ConstraintType.MUST),
+                DatasetFactory.createConstraint("Mes",mes,mes,ConstraintType.MUST),
+                DatasetFactory.createConstraint("Dia",dia,dia,ConstraintType.MUST),
+            ], null,{
+                success:ds=>{
+                    if (ds.values[0].coluna && ds.values[0].coluna.trim() == "deu erro!") {
+                        console.error(ds);
+                        reject(ds.values[1].coluna);
+                    }else{
+                        resolve(ds.values);
+                    }
+                },
+                error:e=>{
+                    console.error(e);
+                    reject(e);
+                }
+            });
+        });
+    }
+}
+async function asyncCriaListaAtividadesPorSolicitante(){
+    try {
+        var atividades = await promiseBuscaAtividade();
+        const mostraColunaHoje =  ValidaSeMesEAnoSelecionadosSaoOsAtuais();
+
+        var html = "";
+
+        for (const atividade of atividades) {
+            var categoria = atividade.selectMotivo;
+            var quantidade = atividade.QNTD;
+            var quantidadeHoje = atividade.QNTDHOJE;
+            var solicitante = atividade.solicitante;
+
+            html+=
+            `<tr>
+                <td>${categoria}</td>
+                <td>${solicitante}</td>
+                <td>${quantidade}</td>
+                ${mostraColunaHoje?`<td>${quantidadeHoje}</td>`:""}
+            </tr>`;
+        }
+
+        if (mostraColunaHoje) {
+            $(".ThHoje").show();
+        }
+        else{
+            $(".ThHoje").hide();
+        }
+        $("#tbodyAtividadesPorSolicitante").html(html);
+
+
+    } catch (error) {
+        
+    }
+
+    function promiseBuscaAtividade(){
+        return new Promise((resolve, reject)=>{
+            var mes = $("#MesFiltro").val().toString().padStart(2, "0");
+            var ano = $("#AnoFiltro").val();
+            var dia = new Date().getDate().toString().padStart(2, "0");
+
+            DatasetFactory.getDataset("ListaAtividadesDoComprasNoFluig",null,[
+                DatasetFactory.createConstraint("Operacao","ChamadosResolvidosPorSolicitante","ChamadosResolvidosPorSolicitante",ConstraintType.MUST),
                 DatasetFactory.createConstraint("Ano",ano,ano,ConstraintType.MUST),
                 DatasetFactory.createConstraint("Mes",mes,mes,ConstraintType.MUST),
                 DatasetFactory.createConstraint("Dia",dia,dia,ConstraintType.MUST),

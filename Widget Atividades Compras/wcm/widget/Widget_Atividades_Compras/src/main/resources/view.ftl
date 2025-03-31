@@ -45,6 +45,7 @@
                     <select name="Relatorio" id="Relatorio" class="form-control">
                         <option value="Todas as Atividades">Todas as Atividades</option>
                         <option value="Atividades por Atendimento">Atividades por Atendimento</option>
+                        <option value="Atividades por Solicitante">Atividades por Solicitante</option>
                     </select>
                 </div>
             </div>
@@ -83,6 +84,19 @@
                     </tr>
                 </thead>
                 <tbody id="tbodyTodasAtividades"></tbody>
+            </table>
+        </div>
+        <div id="AtividadesPorSolicitante">
+            <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Solicitante</th>
+                        <th>Quantidade</th>
+                        <th class="ThHoje">Hoje</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyAtividadesPorSolicitante"></tbody>
             </table>
         </div>
         <div id="AtividadesPorAtendimento">
