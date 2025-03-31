@@ -126,9 +126,9 @@ async function asyncCriaListaAtividadePorAtendimento(){
             html+=
             `<tr>
                 <td>${categoria}</td>
+                <td>${atendimento}</td>
                 <td>${quantidade}</td>
                 ${mostraColunaHoje?`<td>${quantidadeHoje}</td>`:""}
-                <td>${atendimento}</td>
             </tr>`;
         }
 

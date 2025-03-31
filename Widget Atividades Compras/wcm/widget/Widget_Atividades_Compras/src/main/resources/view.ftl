@@ -90,6 +90,7 @@
                 <thead>
                     <tr>
                         <th>Categoria</th>
+                        <th>Atendimento</th>
                         <th>Quantidade</th>
                         <th class="ThHoje">Hoje</th>
                     </tr>
