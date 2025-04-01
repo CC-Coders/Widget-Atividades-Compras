@@ -44,8 +44,10 @@
                     <label for="Relatorio">Relatório:</label>
                     <select name="Relatorio" id="Relatorio" class="form-control">
                         <option value="Todas as Atividades">Todas as Atividades</option>
-                        <option value="Atividades por Atendimento">Atividades por Atendimento</option>
-                        <option value="Atividades por Solicitante">Atividades por Solicitante</option>
+                        <option value="Atividades por Atendimento (Suporte Compras)">Atividades por Atendimento (Suporte Compras)</option>
+                        <option value="Atividades por Solicitante (Suporte Compras)">Atividades por Solicitante (Suporte Compras)</option>
+                        <option value="Atividades por Atendimento (Suporte Frotas)">Atividades por Atendimento (Suporte Frotas)</option>
+                        <option value="Atividades por Solicitante (Suporte Frotas)">Atividades por Solicitante (Suporte Frotas)</option>
                     </select>
                 </div>
             </div>

@@ -13,6 +13,12 @@ function createDataset(fields, constraints, sortFields) {
             else if (Operacao == "ChamadosResolvidosPorSolicitante") {
                 myQuery = MontaQuerySuporteComprasPorSolicitante(Ano, Mes, Dia);
             }
+            else if (Operacao == "ChamadosResolvidosPorAtendimentoFrota") {
+                myQuery = MontaQuerySuporteComprasPorAtendimentoFrota(Ano, Mes, Dia);
+            }
+            else if (Operacao == "ChamadosResolvidosPorSolicitanteFrota") {
+                myQuery = MontaQuerySuporteComprasPorSolicitanteFrota(Ano, Mes, Dia);
+            }
            
 
             return executaQueryNoFluig(myQuery);
@@ -162,6 +168,71 @@ function MontaQuerySuporteComprasPorSolicitante(Ano, Mes, Dia) {
             AND PROCES_WORKFLOW.END_DATE < '" + DataFim + "-01'\
             AND MLSUPORTECOMPRAS.atendimento != ''\
         GROUP BY MLSUPORTECOMPRAS.selectMotivo, MLSUPORTECOMPRAS.solicitante\
+        ORDER BY QNTD DESC";
+
+    return myQuery;
+}
+function MontaQuerySuporteComprasPorAtendimentoFrota(Ano, Mes, Dia) {
+    var DataInicio = Ano + "-" + Mes;
+
+    var DataFim = null;
+    if (Mes == 12) {
+        DataFim = (parseInt(Ano) + 1) + "-01";
+    }
+    else {
+        Mes = parseInt(Mes) + 1;
+        if (Mes < 10 ) {
+            Mes = "0" + Mes
+        }
+        DataFim = Ano + "-" +Mes;
+    }
+
+    var myQuery =
+      "SELECT\
+            COUNT(PROCES_WORKFLOW.NUM_PROCES) as QNTD,\
+            COUNT(CASE WHEN PROCES_WORKFLOW.END_DATE like '" + DataInicio + "-" + Dia + "%' THEN 1 END) as 'QNTDHOJE',\
+            MLSUPORTEFROTAS.suporte,\
+            MLSUPORTEFROTAS.atendimento\
+        FROM PROCES_WORKFLOW\
+            INNER JOIN ML00155539 MLSUPORTEFROTAS ON MLSUPORTEFROTAS.documentid = PROCES_WORKFLOW.NR_DOCUMENTO_CARD\
+            INNER JOIN TAR_PROCES ON PROCES_WORKFLOW.NUM_PROCES = TAR_PROCES.NUM_PROCES AND TAR_PROCES.IDI_STATUS = 2 AND TAR_PROCES.NUM_SEQ_ESCOLHID = 10\
+        WHERE\
+            PROCES_WORKFLOW.END_DATE >= '" + DataInicio + "-01'\
+            AND PROCES_WORKFLOW.END_DATE < '" + DataFim + "-01'\
+            AND MLSUPORTEFROTAS.atendimento != ''\
+        GROUP BY MLSUPORTEFROTAS.suporte, MLSUPORTEFROTAS.atendimento\
+        ORDER BY QNTD DESC";
+
+    return myQuery;
+}
+function MontaQuerySuporteComprasPorSolicitanteFrota(Ano, Mes, Dia) {
+    var DataInicio = Ano + "-" + Mes;
+
+    var DataFim = null;
+    if (Mes == 12) {
+        DataFim = (parseInt(Ano) + 1) + "-01";
+    }
+    else {
+        Mes = parseInt(Mes) + 1;
+        if (Mes < 10 ) {
+            Mes = "0" + Mes
+        }
+        DataFim = Ano + "-" +Mes;
+    }
+
+    var myQuery =
+      "SELECT\
+            COUNT(PROCES_WORKFLOW.NUM_PROCES) as QNTD,\
+            COUNT(CASE WHEN PROCES_WORKFLOW.END_DATE like '" + DataInicio + "-" + Dia + "%' THEN 1 END) as 'QNTDHOJE',\
+            MLSUPORTEFROTAS.suporte,\
+            MLSUPORTEFROTAS.solicitante\
+        FROM PROCES_WORKFLOW\
+            INNER JOIN ML00155539 MLSUPORTEFROTAS ON MLSUPORTEFROTAS.documentid = PROCES_WORKFLOW.NR_DOCUMENTO_CARD\
+            INNER JOIN TAR_PROCES ON PROCES_WORKFLOW.NUM_PROCES = TAR_PROCES.NUM_PROCES AND TAR_PROCES.IDI_STATUS = 2 AND TAR_PROCES.NUM_SEQ_ESCOLHID = 10\
+        WHERE\
+            PROCES_WORKFLOW.END_DATE >= '" + DataInicio + "-01'\
+            AND PROCES_WORKFLOW.END_DATE < '" + DataFim + "-01'\
+        GROUP BY MLSUPORTEFROTAS.suporte, MLSUPORTEFROTAS.solicitante\
         ORDER BY QNTD DESC";
 
     return myQuery;
